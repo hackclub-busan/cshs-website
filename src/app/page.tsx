@@ -1,13 +1,45 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 import Button from "./components/Button";
 import Card from "./components/Card";
 import Member from "./components/Member";
 import Event from "./components/Event";
 import { RiUserCommunityFill } from "react-icons/ri";
-import { FaComputer } from "react-icons/fa6";
+import { FaLaptopCode } from "react-icons/fa";
 import { HiOutlineAcademicCap } from "react-icons/hi";
 
 export default function Home() {
+  const [year, setYear] = useState("2025-2026"); // default selected year
+
+  // Members data
+  // we define a type for clarity so we don't need to resort to `any`
+  interface MemberData {
+    name: string;
+    position: string;
+    pronouns: string;
+  }
+
+  const membersByYear: Record<string, MemberData[]> = {
+    "2025-2026": [
+      { name: "Dana Kim", position: "President", pronouns: "she/her" },
+      { name: "Vivian Choi", position: "Vice-President", pronouns: "she/her" },
+      { name: "Aiden Yoon", position: "Treasurer", pronouns: "he/him" },
+      { name: "Sunny Hwang", position: "Webmaster", pronouns: "he/him" },
+      { name: "Ariel Chun", position: "Secretary", pronouns: "she/her" },
+      { name: "Claire Cho", position: "Member", pronouns: "she/her" },
+      { name: "Rebecca Jeong", position: "Member", pronouns: "she/her" },
+    ],
+    "2024-2025": [
+      { name: "Artem Kim", position: "President", pronouns: "he/him" },
+      { name: "Tanvi Kumar", position: "Vice-President", pronouns: "she/her" },
+      { name: "Dana Kim", position: "Secretary", pronouns: "she/her" },
+      { name: "Vivian Choi", position: "Webmaster", pronouns: "she/her" },
+      { name: "Roenne Arjona", position: "Member", pronouns: "she/her" },
+    ],
+  };
+
   return (
     <>
       {/* Banner */}
@@ -40,7 +72,7 @@ export default function Home() {
         <div className="mb-12" data-aos="fade-right">
           <h1 className="text-7xl text-white md:text-left text-center mt-16 font-bold mb-5">
             Who are{" "}
-            <span className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 text-transparent bg-clip-text">
+            <span className="bg-gradient-to-r from-cyan-400 via-sky-500 to-blue-500 text-transparent bg-clip-text">
               we
             </span>
             ?
@@ -58,7 +90,7 @@ export default function Home() {
         >
           <h1 className="md:col-span-4 text-7xl text-white self-center font-bold md:mb-0 mb-5">
             Our{" "}
-            <span className="bg-gradient-to-r from-red-400 via-red-500 to-red-600 text-transparent bg-clip-text">
+            <span className="bg-gradient-to-r from-cyan-400 via-sky-500 to-blue-500 text-transparent bg-clip-text">
               Goals
             </span>
           </h1>
@@ -75,7 +107,7 @@ export default function Home() {
             <Card
               title="Foster Professional Development"
               color="blue"
-              icon={FaComputer}
+              icon={FaLaptopCode}
             >
               Provide workshops, speaker events, and mentorship programs that
               help members build technical skills, leadership qualities, and
@@ -100,38 +132,16 @@ export default function Home() {
           className="md:grid md:grid-cols-4 md:px-0 px-8 grid auto-rows-auto gap-6"
           data-aos="fade-down"
         >
-          <div className="relative h-48 w-full shadow-xl">
-            <Image
-              className="object-cover rounded-2xl transition-transform duration-300 ease-in-out hover:scale-110"
-              src="/ClubPhotos/1.jpg"
-              alt="cshs"
-              fill
-            />
-          </div>
-          <div className="relative h-48 w-full shadow-xl">
-            <Image
-              className="object-cover rounded-2xl transition-transform duration-300 ease-in-out hover:scale-110"
-              src="/ClubPhotos/2.jpg"
-              alt="cshs"
-              fill
-            />
-          </div>
-          <div className="relative h-48 w-full shadow-xl">
-            <Image
-              className="object-cover rounded-2xl transition-transform duration-300 ease-in-out hover:scale-110"
-              src="/ClubPhotos/3.jpg"
-              alt="cshs"
-              fill
-            />
-          </div>
-          <div className="relative h-48 w-full shadow-xl">
-            <Image
-              className="object-cover rounded-2xl transition-transform duration-300 ease-in-out hover:scale-110"
-              src="/ClubPhotos/4.jpg"
-              alt="cshs"
-              fill
-            />
-          </div>
+          {[1, 2, 3, 4].map((num) => (
+            <div key={num} className="relative h-48 w-full shadow-xl">
+              <Image
+                className="object-cover rounded-2xl transition-transform duration-300 ease-in-out hover:scale-110"
+                src={`/ClubPhotos/${num}.jpg`}
+                alt="cshs"
+                fill
+              />
+            </div>
+          ))}
         </div>
       </div>
 
@@ -147,72 +157,33 @@ export default function Home() {
           </span>
         </h1>
 
-        <div
-          className="flex justify-center mt-5 gap-x-5 mb-12"
-          data-aos="fade-right"
-        >
-          <Button color="red">2024-2025</Button>
-          <Button color="green">2023-2024</Button>
+        {/* Year selection buttons */}
+        <div className="flex justify-center mt-5 gap-x-5 mb-12" data-aos="fade-right">
+          <Button
+            color={year === "2024-2025" ? "green" : "blue"}
+            onClick={() => setYear("2024-2025")}
+          >
+            2024-2025
+          </Button>
+          <Button
+            color={year === "2025-2026" ? "green" : "blue"}
+            onClick={() => setYear("2025-2026")}
+          >
+            2025-2026
+          </Button>
         </div>
 
+        {/* Members list */}
         <div className="lg:grid grid-col-3 gap-y-8" data-aos="fade-up">
-          <div className="lg:flex justify-center gap-x-5 grid auto-rows-auto gap-y-5">
-            <div className="flex justify-center">
+          {membersByYear[year].map((member, idx) => (
+            <div className="flex justify-center gap-x-5 mb-5" key={idx}>
               <Member
-                name="Artem Kim"
-                position="President"
-                photoPath="ajsdfjas"
-                pronouns="he/him"
+                name={member.name}
+                position={member.position}
+                pronouns={member.pronouns}
               />
             </div>
-
-            <div className="flex justify-center lg:mb-0 mb-8">
-              <Member
-                name="Tanvi Kumar"
-                position="Vice-president"
-                photoPath="ajsdfjas"
-                pronouns="she/her"
-              />
-            </div>
-          </div>
-          <div className="xl:flex grid lg:grid-rows-2 lg:justify-center lg:gap-x-5 auto-rows-auto gap-y-5 lg:mb-0 mb-8">
-            <div className="lg:flex gap-x-5 grid auto-rows-auto gap-y-5">
-              <div className="flex justify-center">
-                <Member
-                  name="Aiden Yoon"
-                  position="Treasurer"
-                  photoPath="ajsdfjas"
-                  pronouns="he/him"
-                />
-              </div>
-
-              <div className="flex justify-center">
-                <Member
-                  name="Vivian Choi"
-                  position="Webmaster"
-                  photoPath="ajsdfjas"
-                  pronouns="she/her"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-center">
-              <Member
-                name="Dana Kim"
-                position="Secretary"
-                photoPath="ajsdfjas"
-                pronouns="she/her"
-              />
-            </div>
-          </div>
-          <div className="flex justify-center gap-x-5">
-            <Member
-              name="Roenne Arjona"
-              position="Member"
-              photoPath="ajsdfjas"
-              pronouns="she/her"
-            />
-          </div>
+          ))}
         </div>
       </div>
 
@@ -227,19 +198,32 @@ export default function Home() {
 
         <div className="grid auto-rows-auto gap-y-5 md:px-0 px-8">
           <Event
+            name="Codementum"
+            date=""
+            finished={true}
+            eventType="Competition"
+            description="We at BFS hosted the Codementum Competition in partnership with Hack Club, Shark.dev, and student leaders from CSHS, bringing together elementary school students to explore coding in a fun and collaborative way. Participants tackled creative challenges, built projects, and shared their ideas, guided by mentors and student organizers who encouraged curiosity and problem-solving."
+          />
+          <Event
+            name="GoDot Platformer Workshop"
+            date="October 15, 2025"
+            finished={true}
+            eventType="Workshop"
+            description="BFS hosted an exciting workshop through BFS_Shark.dev to teach students how to create their own 2D platformer games using the Godot game engine. Participants learned the fundamentals of game development, brought their ideas to life, and uploaded their completed games to GitHub to share with the community."
+          />
+          <Event
             name="Boba Drops Workshop"
             date="April 24, 2025"
-            finished={false}
+            finished={true}
             eventType="Workshop"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum nam fugit sit veritatis iste, minima quos illo tempore autem quod aperiam non! Ratione tempore illo tenetur porro cum, ullam quisquam!"
+            description="We at BFS hosted the Bob Drops Workshop to help students create their own websites and celebrate their presence on the web. Participants brought their personal ideas to life using HTML and CSS, hosted their sites on GitHub, and proudly shared their work with the community—earning a boba reward along the way."
           />
-
           <Event
             name="Scrapyard Busan"
             date="March 15-16, 2025"
             finished={true}
             eventType="Hackathon"
-            description="Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum nam fugit sit veritatis iste, minima quos illo tempore autem quod aperiam non! Ratione tempore illo tenetur porro cum, ullam quisquam!"
+            description="We at BFS High School’s Computer Science Honor Society hosted Korea’s first-ever ScrapYard Hackathon, bringing together students from Busan, Daegu, Seoul, and beyond to create clever and delightfully useless projects. Inspired by our own hackathon experiences earlier this year, we planned and executed the event with guidance from Dr. Barnes and support from Hack Club, welcoming over 50 participants who built 18 unique projects."
           />
         </div>
       </div>
